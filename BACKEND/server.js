@@ -37,9 +37,10 @@ const upload = multer({ storage: storage });
 // 2. Serve Static Files (For Render Deployment & Uploads)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // This serves your frontend folder so the whole app runs on one link
-app.use(express.static(path.join(__dirname, '../frontend')));
+app.use(express.static(path.join(__dirname, '../FRONTEND')));
 
-// 3. Vanguard In-Memory Core Database
+// 3. Vanguard Persistent JSON Database
+const dbPath = path.join(__dirname, '../DATABASE/data.json');
 let database = {
     generalPoints: [], facultyJoinedRelieved: [], facultyAchievements: [],
     studentAchievements: [], departmentAchievements: [], facultyEvents: [],
@@ -47,6 +48,20 @@ let database = {
     hackathons: [], facultyFDP: [], facultyVisits: [], patents: [],
     vedicPrograms: [], placements: [], mous: [], skillDevelopment: []
 };
+
+if (fs.existsSync(dbPath)) {
+    try {
+        database = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+    } catch (err) {
+        console.error("Error reading database file. Initializing empty.", err);
+    }
+} else {
+    fs.writeFileSync(dbPath, JSON.stringify(database, null, 2));
+}
+
+function saveDatabase() {
+    fs.writeFileSync(dbPath, JSON.stringify(database, null, 2));
+}
 
 // 4. API ROUTES
 
@@ -72,16 +87,18 @@ app.post('/api/report/:section', upload.single('proofDocument'), (req, res) => {
     else newEntry.proofFile = null;
 
     database[section].push(newEntry);
+    saveDatabase();
     console.log(`[LOGGED] ${section} | Fields: ${Object.keys(recordData).length} | File Attached: ${req.file ? 'YES' : 'NO'}`);
     res.status(201).json({ message: `Success`, entry: newEntry });
 });
 
 // ABSOLUTE PURGE ROUTE (Wipes memory arrays & deletes physical files)
 app.delete('/api/purge', (req, res) => {
-    // 1. Wipe memory
+    // 1. Wipe memory & Save
     for (let key in database) {
         database[key] = [];
     }
+    saveDatabase();
     
     // 2. Delete physical files securely
     if (fs.existsSync(uploadDir)) {

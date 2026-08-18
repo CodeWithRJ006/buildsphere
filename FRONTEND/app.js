@@ -244,6 +244,8 @@ window.submitData = async function(event) {
                 title: 'Telemetry Logged', icon: 'success', toast: true, position: 'bottom-end', showConfirmButton: false, timer: 3000,
                 background: getComputedStyle(document.documentElement).getPropertyValue('--surface'), color: getComputedStyle(document.documentElement).getPropertyValue('--text')
             });
+        } else {
+            Swal.fire({ title: 'Upload Failed', text: `Server error: ${response.status}`, icon: 'error', background: '#111', color: '#fff' });
         }
     } catch (error) {
         Swal.fire({ title: 'Upload Failed', text: 'Server disconnected.', icon: 'error', background: '#111', color: '#fff' });
@@ -263,6 +265,7 @@ window.fetchAndRenderVault = async function() {
             headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
         });
         
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const report = await response.json();
         const data = report.data;
         
@@ -338,7 +341,8 @@ window.purgeSystem = async function() {
         if (result.isConfirmed) {
             try {
                 // DELETE request with cache bypass
-                await fetch('/api/purge', { method: 'DELETE', cache: 'no-store' });
+                const purgeRes = await fetch('/api/purge', { method: 'DELETE', cache: 'no-store' });
+                if (!purgeRes.ok) throw new Error('Purge failed on server');
                 
                 // Clear UI trackers
                 completedSections.clear();
@@ -378,6 +382,7 @@ window.generateReportPDF = async function() {
     try {
         const fetchUrl = `${API_URL}?t=${new Date().getTime()}`;
         const response = await fetch(fetchUrl, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const report = await response.json();
         const container = document.getElementById('report-tables');
         container.innerHTML = ''; 
