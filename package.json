@@ -1,0 +1,9 @@
+{
+  "name": "buildsphere-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install": "cd BACKEND && npm install",
+    "start": "cd BACKEND && node server.js"
+  }
+}
