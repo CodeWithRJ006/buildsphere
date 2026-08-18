@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: buildsphere-app
+    env: node
+    plan: free
+    buildCommand: npm install --prefix BACKEND
+    startCommand: npm start --prefix BACKEND
+    envVars:
+      - key: NODE_ENV
+        value: production
+    disk:
+      name: buildsphere-data
+      mountPath: /opt/render/project/src/DATABASE
+      sizeGB: 1
