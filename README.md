@@ -40,8 +40,7 @@ graph TD
 *   **Database**: Local JSON Store (`data.json`) providing zero-dependency disk persistence.
 
 ## 🚀 Live Deployment
-*   **Render Web Service:** [Click Here to View Live (Placeholder)](#)
-*   **Vercel:** [Click Here to View Live (Placeholder)](#)
+*   **Render Web Service:** https://buildsphere-1.onrender.com
 
 > [!NOTE]
 > **Demo Access Credentials**
@@ -72,22 +71,3 @@ Follow these 3 steps to boot the application locally. Since the backend serves t
     The app will be available at `http://localhost:3000`.
 
 ---
-
-## ☁️ 1-Click Cloud Deployment
-
-The repository comes pre-configured for both **Render** and **Vercel**.
-
-### Deploy to Render (Recommended for Persistence)
-Render provides persistent disk support, meaning `data.json` will permanently store your records.
-1. Create an account on [Render](https://render.com).
-2. Click **New** -> **Blueprint**.
-3. Connect this GitHub repository. Render will automatically read the `render.yaml` file, provision a persistent disk, and deploy the full-stack app.
-
-### Deploy to Vercel (Serverless)
-Vercel is great for fast frontend hosting and serverless functions.
-> [!WARNING]
-> Because Vercel is a serverless environment, the local `data.json` file is read-only in production. Data added during a session will not persist across serverless invocations.
-
-1. Create an account on [Vercel](https://vercel.com).
-2. Click **Add New** -> **Project**.
-3. Import this GitHub repository. Vercel will automatically read `vercel.json` and deploy both the static frontend and the Express backend.
